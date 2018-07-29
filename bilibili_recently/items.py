@@ -12,8 +12,11 @@ class BilibiliRecentlyItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     collection = 'recently_submission'
-    title = Field()
-    time = Field()
     up = Field()
-    log = Field()
+    up_href = Field()
+    title = Field()
     describe = Field()
+    video_href = Field()
+    time = Field()
+    log = Field()
+

@@ -111,6 +111,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from scrapy.http import HtmlResponse
 from selenium.common.exceptions import TimeoutException
+import re
 
 class SeleniumMiddleware():
     def __init__(self, timeout=None, service_args=[]):
@@ -130,6 +131,9 @@ class SeleniumMiddleware():
         :return: HtmlResponse
         '''
         self.logger.debug('chrome is starting')
+        result = re.search('com/video/av', request.url)
+        if result:
+            return None
         pn = request.meta.get('pn', 1)
         try:
             self.brower.get(request.url)
@@ -139,12 +143,11 @@ class SeleniumMiddleware():
                 input.clear()
                 input.send_keys(pn)
                 input.send_keys(Keys.ENTER)
-                self.wait.until(
-                    EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > div.pager.pagination > ul > li.page-item.active > button'), str(pn))
-                )
-                self.wait.until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt')))
-                return HtmlResponse(url=request.url, body=self.brower.page_source, request=request,encoding='utf-8', status=200)
+            self.wait.until(
+                EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > div.pager.pagination > ul > li.page-item.active > button'), str(pn)))
+            self.wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > ul > li > div > div.r')))
+            return HtmlResponse(url=request.url, body=self.brower.page_source, request=request, encoding='utf-8', status=200)
         except TimeoutException:
             return HtmlResponse(url=request.url,status=500,request=request)
 

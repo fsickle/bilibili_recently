@@ -90,5 +90,5 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 MAX_PN = 1
-SELENIUM_TIMEOUT = '3'
+SELENIUM_TIMEOUT = 3.0
 CHROME_SERVICE_ARGS = []
