@@ -130,7 +130,7 @@ class SeleniumMiddleware():
         :return: HtmlResponse
         '''
         self.logger.debug('chrome is starting')
-        pn = request.mate.get('pn', 1)
+        pn = request.meta.get('pn', 1)
         try:
             self.brower.get(request.url)
             if pn > 1:
