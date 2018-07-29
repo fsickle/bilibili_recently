@@ -5,10 +5,15 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+from scrapy import Item, Field
 
 
-class BilibiliRecentlyItem(scrapy.Item):
+class BilibiliRecentlyItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    collection = 'recently_submission'
+    title = Field()
+    time = Field()
+    up = Field()
+    log = Field()
+    describe = Field()
