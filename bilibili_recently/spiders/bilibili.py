@@ -12,7 +12,8 @@ class BilibiliSpider(Spider):
     query = 'spm_id_from:333.8.game_esports.17'
 
     def start_requests(self):
-        yield Request(self.url+urlparse(self.query), headers=self.headers, callback=self.parse_recently)
+        for pn in range(1, self.settings.get('MAX_PN')+1):
+            yield Request(self.url+urlparse(self.query), headers=self.headers, meta={'pn': pn}, callback=self.parse_recently, dont_filter=True)
 
     def parse_recently(self, response):
-        pass
+        print(response.text)

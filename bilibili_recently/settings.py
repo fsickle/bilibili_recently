@@ -52,9 +52,9 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'bilibili_recently.middlewares.BilibiliRecentlyDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'bilibili_recently.middlewares.SeleniumMiddleware': 543,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
@@ -88,3 +88,7 @@ ROBOTSTXT_OBEY = False
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+MAX_PN = '50000'
+SELENIUM_TIMEOUT = '3'
+CHROME_SERVICE_ARGS = []

@@ -8,6 +8,7 @@
 from scrapy import signals
 
 
+
 class BilibiliRecentlySpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -101,3 +102,56 @@ class BilibiliRecentlyDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from logging import getLogger
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from scrapy.http import HtmlResponse
+from selenium.common.exceptions import TimeoutException
+
+class SeleniumMiddleware():
+    def __init__(self, timeout=None, service_args=[]):
+        self.logger = getLogger(__name__)
+        self.timeout = timeout
+        self.brower = webdriver.Chrome(service_args=service_args)
+        self.wait = WebDriverWait(self.brower, timeout=self.timeout)
+
+    def __del__(self):
+        self.brower.close()
+
+    def process_request(self, request, spider):
+        '''
+        用 Chrome 抓取页面
+        :param request: Request 对象
+        :param spider: Spider 对象
+        :return: HtmlResponse
+        '''
+        self.logger.debug('chrome is starting')
+        pn = request.mate.get('pn', 1)
+        try:
+            self.brower.get(request.url)
+            if pn > 1:
+                input = self.wait.until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > div.pager.pagination > div > input')))
+                input.clear()
+                input.send_keys(pn)
+                input.send_keys(Keys.ENTER)
+                self.wait.until(
+                    EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > div.pager.pagination > ul > li.page-item.active > button'), str(pn))
+                )
+                self.wait.until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt')))
+                return HtmlResponse(url=request.url, body=self.brower.page_source, request=request,encoding='utf-8', status=200)
+        except TimeoutException:
+            return HtmlResponse(url=request.url,status=500,request=request)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
+                   service_args=crawler.settings.get('CHROME_SERVICE_ARGS'))
+
+
+
