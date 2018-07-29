@@ -18,5 +18,5 @@ class BilibiliRecentlyItem(Item):
     describe = Field()
     video_href = Field()
     time = Field()
-    log = Field()
+    logs = Field()
 

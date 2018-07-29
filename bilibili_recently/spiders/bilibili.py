@@ -23,18 +23,22 @@ class BilibiliSpider(Spider):
     def parse_recently(self, response):
         videos = response.xpath('//div[@id="videolist_box"]/div[2]/ul[contains(@class,"vd-list")]//li//div[@class="r"]')
         for video in videos:
-            item = BilibiliRecentlyItem()
-            item['up'] = video.css('div.up-info > a::text').extract_first()
-            item['up_href'] = 'https:' + video.css('div.up-info > a::attr("href")').extract_first()
-            item['title'] = video.css('a::text').extract_first()
-            item['describe'] = video.css('div.v-desc::text').extract_first().replace('\n','')
-            item['video_href'] = 'https:' + video.css('a::attr("href")').extract_first()
-            yield item
-            video_url = item.get['video_href']
+            video_url = 'https:' + video.css('a::attr("href")').extract_first()
             yield Request(url=video_url, headers=self.headers, callback=self.parse_video)
 
     def parse_video(self, response):
-        pass
+        item = BilibiliRecentlyItem()
+        item['up'] = response.css('#v_upinfo > div.info > div.user.clearfix > a.name::text').extract_first()
+        item['up_href'] = 'https:' +response.css('#v_upinfo > div.info > div.user.clearfix > a.name::attr("href")').extract_first()
+        item['title'] = response.css('#viewbox_report > h1 > span::text').extract_first()
+        item['describe'] = response.css('#v_desc > div.info.open::text').extract_first().replace('\n','')
+        item['video_href'] = response.css('head > meta:nth-child(10)::attr("content")').extract_first()
+        item['time'] = response.css('#viewbox_report > div.tm-info.tminfo > time::text').extract_first()
+        logs = []
+        for log in response.css('#v_tag > ul > li'):
+            logs.append(log.css('a::text').extract_first())
+        item['logs'] = logs
+        yield item
 
 
 

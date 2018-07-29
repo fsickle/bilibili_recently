@@ -112,12 +112,16 @@ from selenium.webdriver.common.keys import Keys
 from scrapy.http import HtmlResponse
 from selenium.common.exceptions import TimeoutException
 import re
+from selenium.webdriver.chrome.options import Options
 
 class SeleniumMiddleware():
-    def __init__(self, timeout=None, service_args=[]):
+    def __init__(self, timeout=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
-        self.brower = webdriver.Chrome(service_args=service_args)
+        self.chrome_options = Options()
+        self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--disable-gpu')
+        self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
 
     def __del__(self):
@@ -153,8 +157,39 @@ class SeleniumMiddleware():
 
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
-                   service_args=crawler.settings.get('CHROME_SERVICE_ARGS'))
+        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'))
 
+class VideoMiddleware():
+    def __init__(self, timeout=None):
+        self.logger = getLogger(__name__)
+        self.timeout = timeout
+        self.chrome_options = Options()
+        self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--disable-gpu')
+        self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
+        self.wait = WebDriverWait(self.brower, timeout=self.timeout)
+
+    def __del__(self):
+        self.brower.close()
+
+    def process_request(self, request, spider):
+        '''
+        用 Chrome 抓取页面
+        :param request: Request 对象
+        :param spider: Spider 对象
+        :return: HtmlResponse
+        '''
+        self.logger.debug('video is starting')
+        try:
+            self.brower.get(request.url)
+            self.wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '#app > div > div.player-box')))
+            return HtmlResponse(url=request.url, body=self.brower.page_source, request=request, encoding='utf-8', status=200)
+        except TimeoutException:
+            return HtmlResponse(url=request.url,status=500,request=request)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),)
 
 
