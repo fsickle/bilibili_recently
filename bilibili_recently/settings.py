@@ -66,7 +66,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'bilibili_recently.pipelines.MongoPipeLine': 300,
+   'bilibili_recently.pipelines.MongoPipeLine': 400,
+   'bilibili_recently.pipelines.CountPipeLine': 350,
+   'bilibili_recently.pipelines.TextPipeLine': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -95,3 +97,4 @@ SELENIUM_TIMEOUT = 3.0
 MONGO_URI = 'localhost'
 MONGO_DB = 'bilibili_recently'
 PROXY_POOL_URL = 'http://localhost:5555/random'
+LOGS = {'英雄联盟':0 ,'守望先锋':0 ,'DOTA2':0 ,'CS:GO':0 ,'王者荣耀':0 ,'星际争霸2':0 ,'风暴英雄':0 ,'绝地求生':0}
