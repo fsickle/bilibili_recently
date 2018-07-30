@@ -113,16 +113,28 @@ from scrapy.http import HtmlResponse
 from selenium.common.exceptions import TimeoutException
 import re
 from selenium.webdriver.chrome.options import Options
+import requests
 
 class SeleniumMiddleware():
-    def __init__(self, timeout=None):
+    def __init__(self, timeout=None,proxy_pool_url=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
         self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
+        self.proxy_pool_url = proxy_pool_url
+        self.proxy = self.get_proxy()
+        self.chrome_options.add_argument('proxy-server='+ self.proxy)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
+
+    def get_proxy(self):
+        try:
+            response = requests.get(self.proxy_pool_url)
+            if response.status_code == 200:
+                return response.text
+        except ConnectionError:
+            return None
 
     def __del__(self):
         self.brower.close()
@@ -157,17 +169,30 @@ class SeleniumMiddleware():
 
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'))
+        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
+                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'))
 
 class VideoMiddleware():
-    def __init__(self, timeout=None):
+    def __init__(self, timeout=None,proxy_pool_url=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
         self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
+        self.proxy_pool_url = proxy_pool_url
+        self.proxy = self.get_proxy()
+        self.chrome_options.add_argument('proxy-server=' + self.proxy)
+        self.chrome_options.add_argument('proxy-server='+ self.proxy)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
+
+    def get_proxy(self):
+        try:
+            response = requests.get(self.proxy_pool_url)
+            if response.status_code == 200:
+                return response.text
+        except ConnectionError:
+            return None
 
     def __del__(self):
         self.brower.close()
@@ -190,6 +215,7 @@ class VideoMiddleware():
 
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),)
+        return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
+                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'))
 
 

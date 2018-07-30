@@ -94,3 +94,4 @@ MAX_PN = 1
 SELENIUM_TIMEOUT = 3.0
 MONGO_URI = 'localhost'
 MONGO_DB = 'bilibili_recently'
+PROXY_POOL_URL = 'http://localhost:5555/random'
