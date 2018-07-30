@@ -65,9 +65,9 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'bilibili_recently.pipelines.BilibiliRecentlyPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'bilibili_recently.pipelines.MongoPipeLine': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -92,3 +92,5 @@ DOWNLOADER_MIDDLEWARES = {
 
 MAX_PN = 1
 SELENIUM_TIMEOUT = 3.0
+MONGO_URI = 'localhost'
+MONGO_DB = 'bilibili_recently'
