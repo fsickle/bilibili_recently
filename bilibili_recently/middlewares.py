@@ -116,15 +116,17 @@ from selenium.webdriver.chrome.options import Options
 import requests
 
 class SeleniumMiddleware():
-    def __init__(self, timeout=None,proxy_pool_url=None):
+    def __init__(self, proxy_pool_url, user_agent, timeout=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
-        self.chrome_options.add_argument('--headless')
+        #self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
         self.proxy_pool_url = proxy_pool_url
         self.proxy = self.get_proxy()
+        self.user_agent = user_agent
         self.chrome_options.add_argument('proxy-server='+ self.proxy)
+        self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
 
@@ -170,19 +172,21 @@ class SeleniumMiddleware():
     @classmethod
     def from_crawler(cls, crawler):
         return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
-                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'))
+                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'),
+                   user_agent=crawler.settings.get('USER_AGENT'))
 
 class VideoMiddleware():
-    def __init__(self, timeout=None,proxy_pool_url=None):
+    def __init__(self, proxy_pool_url, user_agent ,timeout=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
-        self.chrome_options.add_argument('--headless')
+        #self.chrome_options.add_argument('--headless')
         self.chrome_options.add_argument('--disable-gpu')
         self.proxy_pool_url = proxy_pool_url
         self.proxy = self.get_proxy()
         self.chrome_options.add_argument('proxy-server=' + self.proxy)
-        self.chrome_options.add_argument('proxy-server='+ self.proxy)
+        self.user_agent = user_agent
+        self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
 
@@ -216,6 +220,7 @@ class VideoMiddleware():
     @classmethod
     def from_crawler(cls, crawler):
         return cls(timeout=crawler.settings.get('SELENIUM_TIMEOUT'),
-                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'))
+                   proxy_pool_url=crawler.settings.get('PROXY_POOL_URL'),
+                    user_agent = crawler.settings.get('USER_AGENT'))
 
 

@@ -13,27 +13,29 @@ class TextPipeLine():
 
     def process_item(self, item, spider):
         if item['describe']:
-            if len(item['describe']) == self.limit:
+            if len(item['describe']) > self.limit:
                 item['describe'] = item['describe'][0:self.limit].rstrip()+'...'
+        return item
 
-class CountPipeLine():
-    def __init__(self, logs):
-        self.logs = logs
-        self.logger = getLogger(__name__)
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(
-            logs=crawler.settings.get('LOGS')
-        )
-
-    def process_item(self, item , spider):
-        for log in item['logs']:
-            if log in self.logs.keys():
-                self.logs[log] = self.logs[log] + 1
-
-    def close_spider(self, spider):
-        self.logger.debug(self.logs)
+# class CountPipeLine():
+#     def __init__(self, logs):
+#         self.logs = logs
+#         self.logger = getLogger(__name__)
+#
+#     @classmethod
+#     def from_crawler(cls, crawler):
+#         return cls(
+#             logs=crawler.settings.get('LOGS')
+#         )
+#
+#     def process_item(self, item , spider):
+#         for log in list(item['logs']):
+#             if log in self.logs.keys():
+#                 self.logs[log] = self.logs[log] + 1
+#         return item
+#
+#     def close_spider(self, spider):
+#         self.logger.debug(self.logs)
 
 class MongoPipeLine(object):
     def __init__(self, mongo_uri, mongo_db):
