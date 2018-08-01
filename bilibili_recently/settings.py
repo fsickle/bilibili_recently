@@ -92,10 +92,10 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-MAX_PN = 1
+MAX_PN = 100
 SELENIUM_TIMEOUT = 3.0
 MONGO_URI = 'localhost'
 MONGO_DB = 'bilibili_recently'
 PROXY_POOL_URL = 'http://localhost:5555/random'
 # LOGS = {'英雄联盟':0 ,'守望先锋':0 ,'DOTA2':0 ,'CS:GO':0 ,'王者荣耀':0 ,'星际争霸2':0 ,'风暴英雄':0 ,'绝地求生':0}
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.75 Safari/537.36'
