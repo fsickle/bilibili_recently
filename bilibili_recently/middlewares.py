@@ -115,7 +115,10 @@ from scrapy.http import HtmlResponse
 from selenium.common.exceptions import TimeoutException
 import re
 from selenium.webdriver.chrome.options import Options
-import requests, time
+import requests
+import time
+import base64
+
 
 class SeleniumMiddleware():
     def __init__(self, proxy_pool_url, user_agent, timeout=None):
@@ -124,21 +127,24 @@ class SeleniumMiddleware():
         self.chrome_options = Options()
         #self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
-        #self.proxy_pool_url = proxy_pool_url
-        #self.proxy = self.get_proxy()
+        self.proxy = self.get_proxy()
         self.user_agent = user_agent
-        #self.chrome_options.add_argument('proxy-server=' + self.proxy)
+        self.chrome_options.add_argument('Proxy-Authorization=' + self.proxy)
         self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
 
     def get_proxy(self):
-        try:
-            response = requests.get(self.proxy_pool_url)
-            if response.status_code == 200:
-                return response.text
-        except ConnectionError:
-            return None
+        '''
+        使用的讯代理，得到Proxy
+        :return: proxy
+        '''
+        proxyUser = '讯代理 id'
+        proxyPass = '讯代理 passwd'
+        end = proxyUser + ":" + proxyPass
+        a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
+        proxy = "Basic " + a
+        return proxy
 
     def __del__(self):
         self.brower.close()
@@ -152,9 +158,13 @@ class SeleniumMiddleware():
         '''
         self.logger.debug('chrome is starting')
         result = re.search('com/video/av', request.url)
+        # 对Request进行判断，从而决定 middleware 的使用
         if result:
             return None
         pn = request.meta.get('pn', 1)
+        # 测试代理是否正常运行
+        # self.brower.get('http://httpbin.org/ip')
+        # print(brower.page_source)
         try:
             self.brower.get(request.url)
             if pn > 1:
@@ -167,7 +177,6 @@ class SeleniumMiddleware():
                 EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > div.pager.pagination > ul > li.page-item.active > button'), str(pn)))
             self.wait.until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '#videolist_box > div.vd-list-cnt > ul > li > div > div.r')))
-            #time.sleep(5)
             return HtmlResponse(url=request.url, body=self.brower.page_source, request=request, encoding='utf-8', status=200)
         except TimeoutException:
             return HtmlResponse(url=request.url, status=500, request=request)
@@ -185,21 +194,24 @@ class VideoMiddleware():
         self.chrome_options = Options()
         #self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
-        #self.proxy_pool_url = proxy_pool_url
-        #self.proxy = self.get_proxy()
-        #self.chrome_options.add_argument('proxy-server=' + self.proxy)
+        self.proxy = self.get_proxy()
+        self.chrome_options.add_argument('Proxy-Authorization=' + self.proxy)
         self.user_agent = user_agent
         self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
 
     def get_proxy(self):
-        try:
-            response = requests.get(self.proxy_pool_url)
-            if response.status_code == 200:
-                return response.text
-        except ConnectionError:
-            return None
+        '''
+        使用的讯代理，得到Proxy
+        :return: proxy
+        '''
+        proxyUser = '讯代理 id'
+        proxyPass = '讯代理 passwd'
+        end = proxyUser + ":" + proxyPass
+        a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
+        proxy = "Basic " + a
+        return proxy
 
     def __del__(self):
         self.brower.close()
@@ -215,8 +227,7 @@ class VideoMiddleware():
         try:
             self.brower.get(request.url)
             self.wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '#arc_toolbar_report > div.ops')))
-            #time.sleep(5)
+                EC.presence_of_element_located((By.CSS_SELECTOR, '#playpage_share')))
             return HtmlResponse(url=request.url, body=self.brower.page_source, request=request, encoding='utf-8', status=200)
         except TimeoutException:
             return HtmlResponse(url=request.url,status=500,request=request)
