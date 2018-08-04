@@ -1,7 +1,8 @@
 import pymongo
 import pygal
 
-class Result():
+
+class Result(object):
 
     client = pymongo.MongoClient('localhost')
     db = client.bilibili
