@@ -4,7 +4,7 @@
 <p>添加了 TextPipeLine 对 Item 进行处理。</br>
 之后由 MongoPipeLine 将 Item 存储</p></br>
 <p>最后使用 pygal 生成数据图</p></br>
-<p>其结果如下图所示</p></br。
+<p>其结果如下图所示</p></br>
 
-<img src="data/result.png">
+<img src="data/result.png"></br>
 <img src="data/result_visual.svg">
