@@ -125,7 +125,7 @@ class SeleniumMiddleware():
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
-        #self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
         self.proxy = self.get_proxy()
         self.user_agent = user_agent
@@ -139,8 +139,8 @@ class SeleniumMiddleware():
         使用的讯代理，得到Proxy
         :return: proxy
         '''
-        proxyUser = '讯代理 id'
-        proxyPass = '讯代理 passwd'
+        proxyUser = ''
+        proxyPass = ''
         end = proxyUser + ":" + proxyPass
         a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
         proxy = "Basic " + a
@@ -192,7 +192,7 @@ class VideoMiddleware():
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
-        #self.chrome_options.add_argument('--headless')
+        self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
         self.proxy = self.get_proxy()
         self.chrome_options.add_argument('Proxy-Authorization=' + self.proxy)
@@ -206,8 +206,8 @@ class VideoMiddleware():
         使用的讯代理，得到Proxy
         :return: proxy
         '''
-        proxyUser = '讯代理 id'
-        proxyPass = '讯代理 passwd'
+        proxyUser = ''
+        proxyPass = ''
         end = proxyUser + ":" + proxyPass
         a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
         proxy = "Basic " + a

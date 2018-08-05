@@ -23,7 +23,7 @@ class Result(object):
         result = pygal.Bar(my_config)
 
         result.title = "Results of Games Upload Counts."
-        result.x_labels = list
+        result.x_labels = self.list
         result.x_title = 'Games'
         result.y_title = 'Counts'
 
