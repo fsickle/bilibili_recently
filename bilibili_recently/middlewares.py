@@ -121,30 +121,16 @@ import base64
 
 
 class SeleniumMiddleware():
-    def __init__(self, proxy_pool_url, user_agent, timeout=None):
+    def __init__(self, user_agent, timeout=None):
         self.logger = getLogger(__name__)
         self.timeout = timeout
         self.chrome_options = Options()
         self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
-        self.proxy = self.get_proxy()
         self.user_agent = user_agent
-        self.chrome_options.add_argument('Proxy-Authorization=' + self.proxy)
         self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
-
-    def get_proxy(self):
-        '''
-        使用的讯代理，得到Proxy
-        :return: proxy
-        '''
-        proxyUser = ''
-        proxyPass = ''
-        end = proxyUser + ":" + proxyPass
-        a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
-        proxy = "Basic " + a
-        return proxy
 
     def __del__(self):
         self.brower.close()
@@ -194,24 +180,10 @@ class VideoMiddleware():
         self.chrome_options = Options()
         self.chrome_options.add_argument('--headless')
         #self.chrome_options.add_argument('--disable-gpu')
-        self.proxy = self.get_proxy()
-        self.chrome_options.add_argument('Proxy-Authorization=' + self.proxy)
         self.user_agent = user_agent
         self.chrome_options.add_argument('user-agent=' + self.user_agent)
         self.brower = webdriver.Chrome(chrome_options=self.chrome_options)
         self.wait = WebDriverWait(self.brower, timeout=self.timeout)
-
-    def get_proxy(self):
-        '''
-        使用的讯代理，得到Proxy
-        :return: proxy
-        '''
-        proxyUser = ''
-        proxyPass = ''
-        end = proxyUser + ":" + proxyPass
-        a = base64.b64encode(end.encode('utf-8')).decode('utf-8')
-        proxy = "Basic " + a
-        return proxy
 
     def __del__(self):
         self.brower.close()
