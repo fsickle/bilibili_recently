@@ -7,6 +7,7 @@ from bilibili_recently.items import BilibiliRecentlyItem
 from logging import getLogger
 import random
 
+
 class BilibiliSpider(Spider):
     name = 'bilibili'
     allowed_domains = ['www.bilibili.com']
@@ -38,7 +39,7 @@ class BilibiliSpider(Spider):
         for video in videos:
             video_url = 'https:' + video.css('a::attr("href")').extract_first()
             #self.logger.debug(video_url)
-            time.sleep(random.random())
+            # time.sleep(random.random())
             yield Request(url=video_url, headers=self.headers, callback=self.parse_video)
 
     def parse_video(self, response):
